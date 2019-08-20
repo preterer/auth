@@ -41,9 +41,19 @@ describe("User", function() {
   });
 
   describe("permissionAdd", function() {
-    it("should add a new permission to user", function() {});
+    it("should add a new permission to user", async function() {
+      const name = "PERMISSION";
+      await userRepository.permissionAdd(userId, { name });
+      const user = await userRepository.findOne(userId);
+      const userPermissions = await user.permissions;
+      expect(userPermissions.length).toBeGreaterThan(0);
+      expect(!!userPermissions.find(permission => permission.name === name)).toBeTruthy();
+    });
 
-    it("should not add a permission to user that doesn't exist", function() {});
+    it("should not add a permission to user that doesn't exist", async function() {
+      const name = "PERMISSION";
+      await expect(userRepository.permissionAdd(userId + 1, { name })).rejects.toThrow();
+    });
   });
 
   describe("permissionRemove", function() {
