@@ -1,3 +1,5 @@
+import { EntityRepository } from "typeorm";
+
 import { CoreRepository } from "./core.repository";
 import { Filters } from "../interfaces/filters";
 import { Permission } from "../entities/permission.entity";
@@ -10,6 +12,7 @@ import { QueryBuilder } from "../utils/queryBuilder";
  * @class PermissionRepository
  * @extends {CoreRepository<Permission>}
  */
+@EntityRepository(Permission)
 export class PermissionRepository extends CoreRepository<Permission> {
   /**
    * Returns permission found by name or id
