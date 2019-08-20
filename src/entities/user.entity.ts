@@ -1,4 +1,5 @@
-import { Entity, Column, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import bcrypt from "bcrypt";
+import { Entity, Column, OneToMany, ManyToMany, JoinTable, BeforeInsert, BeforeUpdate } from "typeorm";
 
 import { CoreEntity } from "./core.entity";
 import { Permission } from "./permission.entity";
@@ -50,4 +51,17 @@ export class User extends CoreEntity {
   @ManyToMany(type => Permission, { nullable: true, lazy: true })
   @JoinTable({ name: Tables.USER_ROLES })
   roles: Promise<Role[]>;
+
+  /**
+   * Hashes user password
+   *
+   * @memberof User
+   */
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 12);
+    }
+  }
 }
