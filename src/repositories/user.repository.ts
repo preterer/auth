@@ -24,7 +24,7 @@ export class UserRepository extends CoreRepository<User> {
   filter(filters?: Filters): QueryBuilder<User> {
     const query = super.filter(filters);
     if (filters && filters.search) {
-      query.andLike("login", filters.search);
+      query.andLike(`${this.metadata.tableName}.login`, filters.search);
     }
     return query;
   }

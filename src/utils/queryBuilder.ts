@@ -20,10 +20,10 @@ export class QueryBuilder<Entity extends CoreEntity> extends SelectQueryBuilder<
    * @memberof QueryBuilder
    */
   andLike(field: string, value: string): QueryBuilder<Entity> {
-    return this.andWhere(`${this.tableName}.${field} LIKE :like${field}`, { [`like${field}`]: value });
+    return this.andWhere(`${field} LIKE :like${field}`, { [`like${field}`]: value });
   }
 
-  constructor(queryBuilder: SelectQueryBuilder<Entity>, public tableName: string) {
+  constructor(queryBuilder: SelectQueryBuilder<Entity>) {
     super(queryBuilder);
   }
 }
