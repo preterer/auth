@@ -1,5 +1,6 @@
 export enum Tables {
-  USER = "user",
+  PERMISSION = "permission",
   ROLE = "role",
-  PERMISSION = "permission"
+  USER = "user",
+  USER_ROLES = "user_roles"
 }

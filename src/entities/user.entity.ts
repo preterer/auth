@@ -1,7 +1,9 @@
-import { Entity, Column } from "typeorm";
+import { Entity, Column, OneToMany, ManyToMany, JoinTable } from "typeorm";
 
-import { Tables } from "../enums/tables";
 import { CoreEntity } from "./core.entity";
+import { Permission } from "./permission.entity";
+import { Tables } from "../enums/tables";
+import { Role } from "./role.entity";
 
 /**
  * User entity
@@ -29,4 +31,23 @@ export class User extends CoreEntity {
    */
   @Column({ name: "password", nullable: false })
   password: string;
+
+  /**
+   * Permissions of the user
+   *
+   * @type {Promise<Permission[]>}
+   * @memberof User
+   */
+  @OneToMany(type => Permission, permission => permission.role, { nullable: true, lazy: true, cascade: true })
+  permissions: Promise<Permission[]>;
+
+  /**
+   * Roles of the user
+   *
+   * @type {Promise<Role[]>}
+   * @memberof User
+   */
+  @ManyToMany(type => Permission, { nullable: true, lazy: true })
+  @JoinTable({ name: Tables.USER_ROLES })
+  roles: Promise<Role[]>;
 }
