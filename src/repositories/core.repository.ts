@@ -38,4 +38,18 @@ export abstract class CoreRepository<Entity extends CoreEntity> extends Reposito
       .skip(filters.start)
       .orderBy({ [filters.order]: filters.desc ? "ASC" : "DESC" });
   }
+
+  /**
+   * Saves model data
+   *
+   * @param {*} model
+   * @returns {Promise<Entity>}
+   * @memberof CoreRepository
+   */
+  saveModel(model: any): Promise<Entity> {
+    if (!(model instanceof CoreEntity)) {
+      model = this.create(model);
+    }
+    return this.save(model);
+  }
 }
