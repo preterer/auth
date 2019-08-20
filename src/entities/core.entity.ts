@@ -24,7 +24,7 @@ export abstract class CoreEntity {
    * @memberof Core
    */
   @CreateDateColumn({ name: "created" })
-  created: number;
+  created: Date;
 
   /**
    * Update date
@@ -33,5 +33,5 @@ export abstract class CoreEntity {
    * @memberof Core
    */
   @UpdateDateColumn({ name: "updated" })
-  updated: number;
+  updated: Date;
 }
