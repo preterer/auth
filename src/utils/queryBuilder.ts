@@ -1,4 +1,5 @@
 import { SelectQueryBuilder } from "typeorm";
+
 import { CoreEntity } from "../entities/core.entity";
 
 /**
