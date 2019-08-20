@@ -1,6 +1,6 @@
 import { EntityRepository } from "typeorm";
 
-import { CoreRepository } from "./core.repository";
+import { EntityWithPermissionsRepository } from "./entityWithPermissions.repository";
 import { User } from "../entities/user.entity";
 import { Filters } from "../interfaces/filters";
 import { QueryBuilder } from "../utils/queryBuilder";
@@ -13,7 +13,7 @@ import { QueryBuilder } from "../utils/queryBuilder";
  * @extends {CoreRepository<User>}
  */
 @EntityRepository(User)
-export class UserRepository extends CoreRepository<User> {
+export class UserRepository extends EntityWithPermissionsRepository<User> {
   /**
    * Returns filtered query of users
    *

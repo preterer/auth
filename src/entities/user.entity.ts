@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { Entity, Column, OneToMany, ManyToMany, JoinTable, BeforeInsert, BeforeUpdate } from "typeorm";
 
 import { CoreEntity } from "./core.entity";
+import { EntityWithPermissions } from "../interfaces/entityWithPermissions";
 import { Permission } from "./permission.entity";
 import { Tables } from "../enums/tables";
 import { Role } from "./role.entity";
@@ -14,7 +15,7 @@ import { Role } from "./role.entity";
  * @extends {CoreEntity}
  */
 @Entity({ name: Tables.USER })
-export class User extends CoreEntity {
+export class User extends CoreEntity implements EntityWithPermissions {
   /**
    * User login
    *

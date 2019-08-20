@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany } from "typeorm";
 
+import { EntityWithPermissions } from "../interfaces/entityWithPermissions";
 import { Permission } from "./permission.entity";
 import { Tables } from "../enums/tables";
 import { WithEntity } from "./withEntity.entity";
@@ -12,7 +13,7 @@ import { WithEntity } from "./withEntity.entity";
  * @extends {CoreEntity}
  */
 @Entity({ name: Tables.ROLE })
-export class Role extends WithEntity {
+export class Role extends WithEntity implements EntityWithPermissions {
   /**
    * Role name
    *

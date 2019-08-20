@@ -1,7 +1,7 @@
-import { CoreRepository } from "./core.repository";
+import { EntityWithPermissionsRepository } from "./entityWithPermissions.repository";
 import { Filters } from "../interfaces/filters";
-import { Role } from "../entities/role.entity";
 import { QueryBuilder } from "../utils/queryBuilder";
+import { Role } from "../entities/role.entity";
 
 /**
  * Role repository
@@ -10,7 +10,7 @@ import { QueryBuilder } from "../utils/queryBuilder";
  * @class RoleRepository
  * @extends {CoreRepository<Role>}
  */
-export class RoleRepository extends CoreRepository<Role> {
+export class RoleRepository extends EntityWithPermissionsRepository<Role> {
   /**
    * Returns filtered query of roles
    *
