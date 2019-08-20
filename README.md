@@ -9,4 +9,5 @@
  - implement root role & parent role
  - implement permission check
  - implement passport middleware
+ - extract core features to another library
  - ...?
