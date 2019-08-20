@@ -12,7 +12,7 @@ import { CoreEntity } from "../entities/core.entity";
  */
 export class QueryBuilder<Entity extends CoreEntity> extends SelectQueryBuilder<Entity> {
   /**
-   * Adds a where clause with LIKE
+   * Adds a where LIKE clause
    *
    * @param {string} field
    * @param {string} value
@@ -21,6 +21,18 @@ export class QueryBuilder<Entity extends CoreEntity> extends SelectQueryBuilder<
    */
   andLike(field: string, value: string): QueryBuilder<Entity> {
     return this.andWhere(`${field} LIKE :like${field}`, { [`like${field}`]: value });
+  }
+
+  /**
+   * Adds a where equals clause
+   *
+   * @param {string} field
+   * @param {string} value
+   * @returns {QueryBuilder<Entity>}
+   * @memberof QueryBuilder
+   */
+  andEqual(field: string, value: string): QueryBuilder<Entity> {
+    return this.andWhere(`${field} = :equal${field}`, { [`equal${field}`]: value });
   }
 
   constructor(queryBuilder: SelectQueryBuilder<Entity>) {
