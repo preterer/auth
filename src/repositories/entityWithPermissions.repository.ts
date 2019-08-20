@@ -27,7 +27,7 @@ export class EntityWithPermissionsRepository<Entity extends EntityWithPermission
    * @returns {Promise<Entity>}
    * @memberof RoleRepository
    */
-  async addPermission(id: number, permissionModel: DeepPartial<Permission>): Promise<Entity> {
+  async permissionAdd(id: number, permissionModel: DeepPartial<Permission>): Promise<Entity> {
     const entity = await this.findOne(id);
     if (!entity) {
       throw new Error(Errors.ENTITY_NOT_FOUND);
@@ -46,7 +46,7 @@ export class EntityWithPermissionsRepository<Entity extends EntityWithPermission
    * @returns {Promise<Entity>}
    * @memberof RoleRepository
    */
-  async removePermission(id: number, permissionId: number): Promise<Entity> {
+  async permissionRemove(id: number, permissionId: number): Promise<Entity> {
     const entity = await this.findOne(id);
     if (!entity) {
       throw new Error(Errors.ENTITY_NOT_FOUND);
