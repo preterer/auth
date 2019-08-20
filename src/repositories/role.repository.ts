@@ -24,7 +24,7 @@ export class RoleRepository extends EntityWithPermissionsRepository<Role> {
   filter(filters?: Filters): QueryBuilder<Role> {
     const query = super.filter(filters);
     if (filters && filters.search) {
-      query.andLike(`${this.metadata.tableName}.name`, filters.search);
+      query.andLike(`${this.metadata.tableName}.name`, `%${filters.search}%`);
     }
     return query;
   }

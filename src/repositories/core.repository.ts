@@ -32,11 +32,11 @@ export abstract class CoreRepository<Entity extends CoreEntity> extends Reposito
    * @returns {SelectQueryBuilder<Entity>}
    * @memberof CoreRepository
    */
-  filter(filters: Filters = { limit: 20, start: 0, order: "id", desc: false }): QueryBuilder<Entity> {
+  filter(filters: Filters = {}): QueryBuilder<Entity> {
     return this.createQueryBuilder(this.metadata.tableName)
-      .limit(filters.limit)
-      .skip(filters.start)
-      .orderBy({ [filters.order]: filters.desc ? "ASC" : "DESC" });
+      .limit(filters.limit || 20)
+      .skip(filters.start || 0)
+      .orderBy({ [filters.order || "id"]: filters.desc ? "ASC" : "DESC" });
   }
 
   /**

@@ -38,7 +38,7 @@ export class PermissionRepository extends CoreRepository<Permission> {
   filter(filters?: Filters): QueryBuilder<Permission> {
     const query = super.filter(filters);
     if (filters && filters.search) {
-      query.andLike(`${this.metadata.tableName}.name`, filters.search);
+      query.andLike(`${this.metadata.tableName}.name`, `%${filters.search}%`);
     }
     return query;
   }

@@ -77,7 +77,7 @@ export class UserRepository extends EntityWithPermissionsRepository<User> {
   filter(filters?: Filters): QueryBuilder<User> {
     const query = super.filter(filters);
     if (filters && filters.search) {
-      query.andLike(`${this.metadata.tableName}.login`, filters.search);
+      query.andLike(`${this.metadata.tableName}.login`, `%${filters.search}%`);
     }
     return query;
   }
