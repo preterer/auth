@@ -12,6 +12,20 @@ import { QueryBuilder } from "../utils/queryBuilder";
  */
 export class PermissionRepository extends CoreRepository<Permission> {
   /**
+   * Returns permission found by name or id
+   *
+   * @param {(string | number)} idOrName
+   * @returns {Promise<Permission>}
+   * @memberof PermissionRepository
+   */
+  findByIdOrName(idOrName: string | number): Promise<Permission> {
+    if (typeof idOrName === "string") {
+      return this.findOne({ where: { name: idOrName } });
+    }
+    return this.findOne(idOrName);
+  }
+
+  /**
    * Returns filtered query of permission
    *
    * @param {Filters} [filters]
