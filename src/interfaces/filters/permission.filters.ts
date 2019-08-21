@@ -23,4 +23,12 @@ export interface PermissionFilters extends Filters {
    * @memberof PermissionFilters
    */
   userId?: number;
+
+  /**
+   * Find only inherited permissions
+   *
+   * @type {boolean}
+   * @memberof PermissionFilters
+   */
+  inheritedOnly?: boolean;
 }

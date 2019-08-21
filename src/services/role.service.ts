@@ -1,11 +1,13 @@
 import { InjectRepository } from "typeorm-typedi-extensions";
-import { Service } from "typedi";
+import { Service, Inject } from "typedi";
 
 import { EntityService } from "./entity.service";
+import { Errors } from "../enums/errors";
+import { PermissionService } from "./permission.service";
 import { Role } from "../entities/role.entity";
 import { RoleRepository } from "../repositories/role.repository";
 import { RoleModel } from "../interfaces/models/role.model";
-import { Errors } from "../enums/errors";
+import { PermissionFilters } from "../interfaces/filters/permission.filters";
 
 /**
  * Role management service
@@ -25,6 +27,16 @@ export class RoleService extends EntityService<Role, RoleModel> {
    */
   @InjectRepository(Role)
   protected readonly repository: RoleRepository;
+
+  /**
+   * Permission service
+   *
+   * @protected
+   * @type {PermissionService}
+   * @memberof RoleService
+   */
+  @Inject(type => PermissionService)
+  protected readonly permissionService: PermissionService;
 
   /**
    * Gets the root role without any parent
@@ -48,6 +60,45 @@ export class RoleService extends EntityService<Role, RoleModel> {
     }
     await this.repository.delete(id);
     return id;
+  }
+
+  /**
+   * Copies permissions from one role, to another
+   *
+   * @param {number} fromId
+   * @param {number} toId
+   * @returns {Promise<void>}
+   * @memberof RoleService
+   */
+  async copyPermissions(fromId: number, toId: number): Promise<void> {
+    const permissions = await this.permissionService.list({ limit: -1, roleId: fromId } as PermissionFilters);
+    await Promise.all(
+      permissions.list.map(permission =>
+        this.permissionService.add({
+          name: permission.name,
+          entityId: permission.entityId,
+          entityType: permission.entityType,
+          roleId: toId,
+          inherited: true
+        })
+      )
+    );
+  }
+
+  /**
+   * Removes inherited permissions
+   *
+   * @param {number} roleId
+   * @returns {Promise<void>}
+   * @memberof RoleService
+   */
+  async removeInheritedPermissions(roleId: number): Promise<void> {
+    const permissions = await this.permissionService.list({
+      limit: -1,
+      roleId,
+      inheritedOnly: true
+    } as PermissionFilters);
+    await Promise.all(permissions.list.map(permission => this.permissionService.delete(permission.id)));
   }
 
   /**

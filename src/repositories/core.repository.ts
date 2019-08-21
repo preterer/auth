@@ -33,9 +33,12 @@ export abstract class CoreRepository<Entity extends CoreEntity> extends Reposito
    * @memberof CoreRepository
    */
   filter(filters: Filters = {}): QueryBuilder<Entity> {
-    return this.createQueryBuilder(this.metadata.tableName)
-      .limit(filters.limit || 20)
+    const query = this.createQueryBuilder(this.metadata.tableName)
       .skip(filters.start || 0)
       .orderBy({ [filters.order || `${this.metadata.tableName}.id`]: filters.desc ? "ASC" : "DESC" });
+    if (!filters.limit || filters.limit > 0) {
+      query.limit(filters.limit || 20);
+    }
+    return query;
   }
 }

@@ -24,6 +24,15 @@ export class Permission extends WithEntity {
   name: string;
 
   /**
+   * Is permission inherited
+   *
+   * @type {boolean}
+   * @memberof Permission
+   */
+  @Column({ name: "inherited", nullable: false, default: false })
+  inherited: boolean;
+
+  /**
    * Role that contains the permission
    *
    * @type {Promise<Role>}

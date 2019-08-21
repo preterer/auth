@@ -1,13 +1,17 @@
-import { RoleService } from "../src/services/role.service";
-import { mockDB, mockData, clearData } from "./testUtils";
 import Container from "typedi";
 
+import { mockDB, mockData, clearData } from "./testUtils";
+import { PermissionService } from "../src/services/permission.service";
+import { RoleService } from "../src/services/role.service";
+import { PermissionFilters } from "../src/interfaces/filters/permission.filters";
+
 describe("Role", function() {
-  let roleService: RoleService, roleId: number, amounts: number;
+  let permissionService: PermissionService, roleService: RoleService, roleId: number, amounts: number;
 
   beforeAll(async function() {
     await mockDB();
     roleService = Container.get(RoleService);
+    permissionService = Container.get(PermissionService);
   });
 
   beforeEach(async function() {
@@ -116,6 +120,30 @@ describe("Role", function() {
     it("should allow to delete a regular role", async function() {
       await roleService.delete(roleId);
       await expect(roleService.get(roleId)).rejects.toThrow();
+    });
+  });
+
+  describe("copy permissions", function() {
+    it("should copy permissions from parent role to child role", async function() {
+      const permissionNames = ["1", "2", "3", "4"];
+      await Promise.all(permissionNames.map(name => permissionService.add({ name, roleId })));
+      await roleService.copyPermissions(roleId, roleId - 1);
+      const permissions = await permissionService.list({ roleId: roleId - 1 } as PermissionFilters);
+      expect(permissions.count).toBe(permissionNames.length);
+      for (const name of permissionNames) {
+        expect(permissions.list.some(permission => permission.name === name)).toBeTruthy();
+      }
+    });
+  });
+
+  describe("remove inherited permissions", function() {
+    it("should remove permissions inherited from other roles", async function() {
+      const permissionNames = ["1", "2", "3", "4"];
+      await Promise.all(permissionNames.map(name => permissionService.add({ name, roleId })));
+      await roleService.copyPermissions(roleId, roleId - 1);
+      await roleService.removeInheritedPermissions(roleId - 1);
+      const permissions = await permissionService.list({ roleId: roleId - 1 } as PermissionFilters);
+      expect(permissions.count).toBe(0);
     });
   });
 });

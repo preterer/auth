@@ -36,6 +36,9 @@ export class PermissionRepository extends CoreRepository<Permission> {
     if (filters.roleId) {
       query.innerJoin(`${tableName}.role`, "role").andEqual("role.id", filters.roleId);
     }
+    if (filters.inheritedOnly) {
+      query.andEqual(`${tableName}.inherited`, true);
+    }
     return query;
   }
 }
