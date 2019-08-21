@@ -12,7 +12,7 @@ import { Filters } from "../interfaces/filters";
  * @class EntityService
  * @template Entity
  */
-export abstract class EntityService<Entity extends CoreEntity> {
+export abstract class EntityService<Entity extends CoreEntity, Model = object> {
   /**
    * Entity repository
    *
@@ -30,7 +30,7 @@ export abstract class EntityService<Entity extends CoreEntity> {
    * @returns {Promise<EntityList<Entity>>}
    * @memberof EntityService
    */
-  list(filters: Filters): Promise<EntityList<Entity>> {
+  list(filters?: Filters): Promise<EntityList<Entity>> {
     return this.repository
       .filter(filters)
       .getManyAndCount()
@@ -60,7 +60,7 @@ export abstract class EntityService<Entity extends CoreEntity> {
    * @returns {Promise<Entity>}
    * @memberof EntityService
    */
-  add(model: object): Promise<Entity> {
+  add(model: Model): Promise<Entity> {
     return this.prepareModel(model).then(entityLike => this.repository.save(entityLike as any));
   }
 
@@ -72,7 +72,7 @@ export abstract class EntityService<Entity extends CoreEntity> {
    * @returns {Promise<Entity>}
    * @memberof EntityService
    */
-  update(id: number, model: object): Promise<Entity> {
+  update(id: number, model: Model): Promise<Entity> {
     return this.get(id)
       .then(() => this.prepareModel({ ...model, id }))
       .then(entityLike => this.repository.save(entityLike as any));
@@ -129,7 +129,7 @@ export abstract class EntityService<Entity extends CoreEntity> {
    * @returns {Promise<Entity>}
    * @memberof EntityService
    */
-  protected prepareModel(model: object): Promise<Entity> {
+  protected prepareModel(model: Model): Promise<Entity> {
     return Promise.resolve(this.repository.create(model));
   }
 }
