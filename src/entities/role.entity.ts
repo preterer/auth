@@ -25,6 +25,24 @@ export class Role extends WithEntity implements EntityWithPermissions {
   name: string;
 
   /**
+   * Id of related entity
+   *
+   * @type {string}
+   * @memberof Role
+   */
+  @Column({ name: "entity_id", nullable: true })
+  entityId: string;
+
+  /**
+   * Type of related entity
+   *
+   * @type {string}
+   * @memberof Role
+   */
+  @Column({ name: "entity_type", nullable: true })
+  entityType: string;
+
+  /**
    * Parent role
    *
    * @type {Promise<Role>}

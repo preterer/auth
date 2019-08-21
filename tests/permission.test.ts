@@ -2,15 +2,23 @@ import { Container } from "typedi";
 
 import { PermissionFilters } from "../src/interfaces/filters/permission.filters";
 import { PermissionService } from "../src/services/permission.service";
+import { UserService } from "../src/services/user.service";
 
 import { mockDB, mockData, clearData } from "./testUtils";
+import { RoleService } from "../src/services/role.service";
 
 describe("Permission", function() {
-  let permissionService: PermissionService, userId: number, roleId: number;
+  let permissionService: PermissionService,
+    roleService: RoleService,
+    userService: UserService,
+    userId: number,
+    roleId: number;
 
   beforeAll(async function() {
     await mockDB();
     permissionService = Container.get(PermissionService);
+    roleService = Container.get(RoleService);
+    userService = Container.get(UserService);
   });
 
   beforeEach(async function() {
@@ -107,6 +115,101 @@ describe("Permission", function() {
       const results = await permissionService.list({ roleId, limit: amount * 2 } as PermissionFilters);
       expect(results.list.length).toBe(amount);
       expect(results.count).toBe(amount);
+    });
+  });
+
+  describe("check", function() {
+    const name = "REQUIRED_PERMISSION";
+    const entityId = "123";
+    const entityType = "entityType";
+    let roleWithEntityId: number;
+
+    beforeEach(async function() {
+      roleWithEntityId = await roleService
+        .add({ name: "Test role", parentId: roleId, entityId, entityType })
+        .then(role => role.id);
+      await userService.roleAdd(userId, roleId);
+      await userService.roleAdd(userId, roleWithEntityId);
+    });
+
+    it("should succeed when user has required permission", async function() {
+      await permissionService.add({ name, userId });
+      const success = await permissionService.check(userId, name);
+      expect(success).toBeTruthy();
+    });
+
+    it("should succeed when user has a role with required permission", async function() {
+      await permissionService.add({ name, roleId });
+      const success = await permissionService.check(userId, name);
+      expect(success).toBeTruthy();
+    });
+
+    it("should succeed when user has required permission with entity", async function() {
+      await permissionService.add({ name, userId, entityId, entityType });
+      const success = await permissionService.check(userId, name, entityId, entityType);
+      expect(success).toBeTruthy();
+    });
+
+    it("should succeed when user has a role with required permission with entity", async function() {
+      await permissionService.add({ name, roleId, entityId, entityType });
+      const success = await permissionService.check(userId, name, entityId, entityType);
+      expect(success).toBeTruthy();
+    });
+
+    it("should succeed when user has a role with entity with required permission", async function() {
+      await userService.roleAdd(userId, roleWithEntityId);
+      await permissionService.add({ name, roleId: roleWithEntityId });
+      const success = await permissionService.check(userId, name, entityId, entityType);
+      expect(success).toBeTruthy();
+    });
+
+    it("should fail when user doesn't have the required permission", async function() {
+      const success = await permissionService.check(userId, name);
+      expect(success).toBeFalsy();
+    });
+
+    it("should fail when user has the required permission but with wrong entity", async function() {
+      await permissionService.add({ name, userId, entityId: "some_other_id", entityType });
+      const success = await permissionService.check(userId, name, entityId, entityType);
+      expect(success).toBeFalsy();
+    });
+
+    it("should fail when user has the required permission with entity but it requieres full access", async function() {
+      await permissionService.add({ name, userId, entityId: entityId, entityType });
+      const success = await permissionService.check(userId, name);
+      expect(success).toBeFalsy();
+    });
+
+    it("should fail when user has a role with the required permission but with wrong entity", async function() {
+      await permissionService.add({ name, roleId, entityId: entityId, entityType: "something_else" });
+      const success = await permissionService.check(userId, name, entityId, entityType);
+      expect(success).toBeFalsy();
+    });
+
+    it("should fail when user has a role with the required permission with entity but it requires full access", async function() {
+      await permissionService.add({ name, roleId, entityId: entityId, entityType });
+      const success = await permissionService.check(userId, name);
+      expect(success).toBeFalsy();
+    });
+
+    it("should fail when user has a role with with the required permission but role has wrong entity", async function() {
+      const newRoleId: number = await roleService
+        .add({ name: "Test role 2", parentId: roleId, entityId: "wrong id", entityType })
+        .then(role => role.id);
+      await userService.roleAdd(userId, newRoleId);
+      await permissionService.add({ name, roleId: newRoleId });
+      const success = await permissionService.check(userId, name, entityId, entityType);
+      expect(success).toBeFalsy();
+    });
+
+    it("should fail when user has a role with the required permission but role has an entity and it requires full access", async function() {
+      const newRoleId: number = await roleService
+        .add({ name: "Test role 2", parentId: roleId, entityId, entityType })
+        .then(role => role.id);
+      await userService.roleAdd(userId, newRoleId);
+      await permissionService.add({ name, roleId: newRoleId });
+      const success = await permissionService.check(userId, name);
+      expect(success).toBeFalsy();
     });
   });
 });

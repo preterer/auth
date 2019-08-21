@@ -28,4 +28,20 @@ export interface RoleModel {
    * @memberof RoleModel
    */
   parentId?: number;
+
+  /**
+   * Id of related entity
+   *
+   * @type {string}
+   * @memberof RoleModel
+   */
+  entityId?: string;
+
+  /**
+   * Type of related entity
+   *
+   * @type {string}
+   * @memberof RoleModel
+   */
+  entityType?: string;
 }

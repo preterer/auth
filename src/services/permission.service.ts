@@ -65,4 +65,38 @@ export class PermissionService extends EntityService<Permission, PermissionModel
 
     return permission;
   }
+
+  /**
+   * Checks if user has given permission
+   *
+   * @param {number} userId
+   * @param {string} permissionName
+   * @param {string} [entityId]
+   * @param {string} [entityType]
+   * @returns {Promise<boolean>}
+   * @memberof PermissionService
+   */
+  check(userId: number, permissionName: string, entityId?: string, entityType?: string): Promise<boolean> {
+    const query = this.repository
+      .createQueryBuilder("permission")
+      .andEqual("permission.name", permissionName)
+      .leftJoin("permission.user", "user")
+      .leftJoin("permission.role", "role")
+      .leftJoin("role.users", "roleUser")
+      .andWhere("(user.id = :userId OR roleUser.id = :userId)", { userId });
+
+    const roleEntityIsNull = "(role.entityId IS NULL AND role.entityType IS NULL)";
+    const permissionEntityIsNull = "(permission.entityId IS NULL AND permission.entityType IS NULL)";
+
+    if (entityId && entityType) {
+      const roleEntityMatches = "(role.entityId = :entityId AND role.entityType = :entityType)";
+      const permissionEntityMatches = "(permission.entityId = :entityId AND permission.entityType = :entityType)";
+      const q = `( (${roleEntityMatches} OR ${roleEntityIsNull}) AND (${permissionEntityIsNull} OR ${permissionEntityMatches}) )`;
+
+      query.andWhere(q, { entityId, entityType });
+    } else {
+      query.andWhere(`(${roleEntityIsNull} AND ${permissionEntityIsNull})`);
+    }
+    return query.getCount().then(count => count > 0);
+  }
 }
