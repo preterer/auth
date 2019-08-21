@@ -5,7 +5,7 @@ import { Errors } from "../enums/errors";
 import { Filters } from "../interfaces/filters";
 
 /**
- * Abstract service to manage entities
+ * Entity management abstract service
  *
  * @export
  * @abstract
@@ -13,7 +13,15 @@ import { Filters } from "../interfaces/filters";
  * @template Entity
  */
 export abstract class EntityService<Entity extends CoreEntity> {
-  constructor(protected readonly repository: CoreRepository<Entity>) {}
+  /**
+   * Entity repository
+   *
+   * @protected
+   * @abstract
+   * @type {CoreRepository<Entity>}
+   * @memberof EntityService
+   */
+  protected abstract readonly repository: CoreRepository<Entity>;
 
   /**
    * Gets list of entities with total count
@@ -81,6 +89,36 @@ export abstract class EntityService<Entity extends CoreEntity> {
     return this.get(id)
       .then(() => this.repository.delete(id))
       .then(() => id);
+  }
+
+  /**
+   * Splices entity from list
+   *
+   * @template Entity
+   * @param {Entity[]} entities
+   * @param {number} id
+   * @memberof EntityService
+   */
+  spliceEntityOrThrow<Entity extends CoreEntity>(entities: Entity[], id: number): void {
+    const index = this.findIndexOrThrow(entities, id);
+    entities.splice(index, 1);
+  }
+
+  /**
+   * Finds index of entity with given id
+   *
+   * @template Entity
+   * @param {Entity[]} entities
+   * @param {number} id
+   * @returns
+   * @memberof EntityService
+   */
+  findIndexOrThrow<Entity extends CoreEntity>(entities: Entity[], id: number): number {
+    const index = entities.findIndex(entity => entity.id === id);
+    if (index < 0) {
+      throw new Error(Errors.ENTITY_NOT_FOUND);
+    }
+    return index;
   }
 
   /**
