@@ -82,5 +82,10 @@ describe("Role", function() {
       const rootRole = await roleService.getRoot();
       await expect(roleService.delete(rootRole.id)).rejects.toThrow();
     });
+
+    it("should allow to delete a regular role", async function() {
+      await roleService.delete(roleId);
+      await expect(roleService.get(roleId)).rejects.toThrow();
+    });
   });
 });
