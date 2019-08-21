@@ -3,11 +3,10 @@ import * as TypeORM from "typeorm";
 import { DeepPartial } from "typeorm";
 
 import { Permission } from "../src/entities/permission.entity";
-import { PermissionRepository } from "../src/repositories/permission.repository";
 import { Role } from "../src/entities/role.entity";
-import { RoleRepository } from "../src/repositories/role.repository";
+import { RoleService } from "../src/services/role.service";
 import { User } from "../src/entities/user.entity";
-import { UserRepository } from "../src/repositories/user.repository";
+import { UserService } from "../src/services/user.service";
 
 /**
  * Mocks in memory DB
@@ -38,16 +37,15 @@ export function mockDB(): Promise<TypeORM.Connection> {
 export async function mockData(
   amounts = 5
 ): Promise<{ userId: number; roleId: number; amounts: number; rootRole: DeepPartial<Role> }> {
-  const userRepository = TypeORM.getCustomRepository(UserRepository);
-  const roleRepository = TypeORM.getCustomRepository(RoleRepository);
-  const permissionRepository = TypeORM.getCustomRepository(PermissionRepository);
+  const userService = Container.get(UserService);
+  const roleService = Container.get(RoleService);
 
-  const rootRole = await permissionRepository.save({ name: "Root", created: new Date(), modified: new Date() });
+  const rootRole = await roleService.add({ name: "Root" });
 
   let userId: number, roleId: number;
   for (let i = 1; i <= amounts; i++) {
-    userId = await userRepository.save(userData(i)).then(user => user.id);
-    roleId = await roleRepository.save({ name: roleName(i) }).then(role => role.id);
+    userId = await userService.add(userData(i)).then(user => user.id);
+    roleId = await roleService.add({ name: roleName(i) }).then(role => role.id);
   }
   return { userId, roleId, amounts, rootRole };
 }
