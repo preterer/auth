@@ -77,6 +77,36 @@ describe("Role", function() {
     });
   });
 
+  describe("update", function() {
+    it("should not allow to set parent to root role", async function() {
+      const rootRole = await roleService.getRoot();
+      await expect(roleService.update(rootRole.id, { name: rootRole.name, parentId: roleId })).rejects.toThrow();
+    });
+
+    it("should allow to move a regular role through the tree", async function() {
+      const parentId = roleId - 1;
+      await roleService.update(roleId, { name: "test", parentId });
+      const role = await roleService.get(roleId);
+      const parent = await role.parent;
+      expect(parent.id).toBe(parentId);
+    });
+
+    it("should not allow to set role as its parent", async function() {
+      await expect(roleService.update(roleId, { name: "test", parentId: roleId })).rejects.toThrow();
+    });
+
+    it("should allow to only update name of a role", async function() {
+      const name = "New test name";
+      const roleBeforeUpdate = await roleService.get(roleId);
+      const parentBeforeUpdate = await roleBeforeUpdate.parent;
+      await roleService.update(roleId, { name });
+      const roleAfterUpdate = await roleService.get(roleId);
+      const parentAfterUpdate = await roleAfterUpdate.parent;
+      expect(roleAfterUpdate.name).toBe(name);
+      expect(parentAfterUpdate.id).toBe(parentBeforeUpdate.id);
+    });
+  });
+
   describe("delete", function() {
     it("should not allow to remove a role without parent that doesn't exist", async function() {
       const rootRole = await roleService.getRoot();

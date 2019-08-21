@@ -63,6 +63,15 @@ export class RoleService extends EntityService<Role, RoleModel> {
     if (!model.parentId && !model.id) {
       throw new Error(Errors.ROLE_REQUIRES_PARENT);
     }
+    if (model.id === model.parentId) {
+      throw new Error(Errors.ROLE_CANNOT_BE_ITS_PARENT);
+    }
+    if (model.id && model.parentId) {
+      const parent = await this.get(model.id).then(role => role.parent);
+      if (!parent) {
+        throw new Error(Errors.ROLE_ROOT_CANNOT_BE_DELETED);
+      }
+    }
     if (model.parentId) {
       role.parent = Promise.resolve(await this.get(model.parentId));
     }

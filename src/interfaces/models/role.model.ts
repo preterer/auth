@@ -19,7 +19,7 @@ export interface RoleModel {
    * @type {string}
    * @memberof RoleModel
    */
-  name: string;
+  name?: string;
 
   /**
    * Id of parent role
@@ -27,5 +27,5 @@ export interface RoleModel {
    * @type {number}
    * @memberof RoleModel
    */
-  parentId: number;
+  parentId?: number;
 }
