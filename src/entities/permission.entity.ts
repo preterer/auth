@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, ManyToOne, JoinColumn, Column } from "typeorm";
 
 import { Role } from "./role.entity";
 import { Tables } from "../enums/tables";
@@ -20,6 +20,7 @@ export class Permission extends WithEntity {
    * @type {string}
    * @memberof Permission
    */
+  @Column({ name: "name" })
   name: string;
 
   /**
