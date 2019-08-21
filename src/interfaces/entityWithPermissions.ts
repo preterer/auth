@@ -1,4 +1,5 @@
-import { CoreEntity } from "../entities/core.entity";
+import { CoreEntity } from "@preterer/typeorm-extensions";
+
 import { Permission } from "../entities/permission.entity";
 
 /**
