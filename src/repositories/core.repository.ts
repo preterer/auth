@@ -1,7 +1,7 @@
 import { Repository, QueryRunner } from "typeorm";
 
 import { CoreEntity } from "../entities/core.entity";
-import { Filters } from "../interfaces/filters";
+import { Filters } from "../interfaces/filters/filters";
 import { QueryBuilder } from "../utils/queryBuilder";
 
 /**
@@ -36,6 +36,6 @@ export abstract class CoreRepository<Entity extends CoreEntity> extends Reposito
     return this.createQueryBuilder(this.metadata.tableName)
       .limit(filters.limit || 20)
       .skip(filters.start || 0)
-      .orderBy({ [filters.order || "id"]: filters.desc ? "ASC" : "DESC" });
+      .orderBy({ [filters.order || `${this.metadata.tableName}.id`]: filters.desc ? "ASC" : "DESC" });
   }
 }

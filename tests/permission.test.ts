@@ -1,5 +1,6 @@
 import { Container } from "typedi";
 
+import { PermissionFilters } from "../src/interfaces/filters/permission.filters";
 import { PermissionService } from "../src/services/permission.service";
 
 import { mockDB, mockData, clearData } from "./testUtils";
@@ -62,6 +63,17 @@ describe("Permission", function() {
       expect(results.count).toBe(0);
     });
 
+    it("should find some permissions with default filters", async function() {
+      const name = "TEST permission Search";
+      const amount = 100;
+      for (let i = 0; i < amount; i++) {
+        await permissionService.add({ name: `${name}_${i}` });
+      }
+      const results = await permissionService.list();
+      expect(results.list.length).toBeGreaterThan(0);
+      expect(results.count).toBe(amount);
+    });
+
     it("should find all permissions", async function() {
       const name = "TEST permission Search";
       const amount = 100;
@@ -69,6 +81,30 @@ describe("Permission", function() {
         await permissionService.add({ name: `${name}_${i}` });
       }
       const results = await permissionService.list({ limit: amount });
+      expect(results.list.length).toBe(amount);
+      expect(results.count).toBe(amount);
+    });
+
+    it("should find permissions related to user", async function() {
+      const name = "TEST permission Search";
+      const amount = 100;
+      for (let i = 0; i < amount; i++) {
+        await permissionService.add({ name: `${name}_${i}`, userId });
+        await permissionService.add({ name: `${name}_${i}`, roleId });
+      }
+      const results = await permissionService.list({ userId, limit: amount * 2 } as PermissionFilters);
+      expect(results.list.length).toBe(amount);
+      expect(results.count).toBe(amount);
+    });
+
+    it("should find permissions related to role", async function() {
+      const name = "TEST permission Search";
+      const amount = 100;
+      for (let i = 0; i < amount; i++) {
+        await permissionService.add({ name: `${name}_${i}`, userId });
+        await permissionService.add({ name: `${name}_${i}`, roleId });
+      }
+      const results = await permissionService.list({ roleId, limit: amount * 2 } as PermissionFilters);
       expect(results.list.length).toBe(amount);
       expect(results.count).toBe(amount);
     });

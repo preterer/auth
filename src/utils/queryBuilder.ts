@@ -31,7 +31,7 @@ export class QueryBuilder<Entity extends CoreEntity> extends SelectQueryBuilder<
    * @returns {QueryBuilder<Entity>}
    * @memberof QueryBuilder
    */
-  andEqual(field: string, value: string): QueryBuilder<Entity> {
+  andEqual(field: string, value: any): QueryBuilder<Entity> {
     return this.andWhere(`${field} = :equal${field}`, { [`equal${field}`]: value });
   }
 

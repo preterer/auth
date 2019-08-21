@@ -2,7 +2,7 @@ import { CoreEntity } from "../entities/core.entity";
 import { CoreRepository } from "../repositories/core.repository";
 import { EntityList } from "../interfaces/entityList";
 import { Errors } from "../enums/errors";
-import { Filters } from "../interfaces/filters";
+import { Filters } from "../interfaces/filters/filters";
 
 /**
  * Entity management abstract service

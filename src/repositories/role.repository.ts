@@ -1,7 +1,7 @@
 import { EntityRepository } from "typeorm";
 
 import { CoreRepository } from "./core.repository";
-import { Filters } from "../interfaces/filters";
+import { Filters } from "../interfaces/filters/filters";
 import { QueryBuilder } from "../utils/queryBuilder";
 import { Role } from "../entities/role.entity";
 
