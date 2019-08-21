@@ -1,4 +1,4 @@
-import { Filters } from "./filters";
+import { Filters } from "@preterer/typeorm-extensions";
 
 /**
  * Filters of permissions

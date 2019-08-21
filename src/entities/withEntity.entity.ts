@@ -1,6 +1,6 @@
 import { Column } from "typeorm";
 
-import { CoreEntity } from "./core.entity";
+import { CoreEntity } from "@preterer/typeorm-extensions";
 
 /**
  * Fields of entity with related entity

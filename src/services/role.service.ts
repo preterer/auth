@@ -1,7 +1,8 @@
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Service, Inject } from "typedi";
 
-import { EntityService } from "./entity.service";
+import { EntityService } from "@preterer/typeorm-extensions";
+
 import { Errors } from "../enums/errors";
 import { PermissionService } from "./permission.service";
 import { Role } from "../entities/role.entity";

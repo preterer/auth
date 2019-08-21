@@ -1,8 +1,7 @@
 import { EntityRepository } from "typeorm";
 
-import { CoreRepository } from "./core.repository";
-import { Filters } from "../interfaces/filters/filters";
-import { QueryBuilder } from "../utils/queryBuilder";
+import { CoreRepository, QueryBuilder, Filters } from "@preterer/typeorm-extensions";
+
 import { Role } from "../entities/role.entity";
 
 /**

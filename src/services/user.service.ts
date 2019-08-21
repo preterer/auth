@@ -4,8 +4,9 @@ import { DeepPartial } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Service, Inject } from "typedi";
 
+import { EntityService } from "@preterer/typeorm-extensions";
+
 import { AuthConfig } from "../config";
-import { EntityService } from "./entity.service";
 import { Errors } from "../enums/errors";
 import { LoginData } from "../interfaces/models/loginData.model";
 import { PermissionFilters } from "../interfaces/filters/permission.filters";

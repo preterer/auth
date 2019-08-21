@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import { Entity, Column, OneToMany, ManyToMany, JoinTable, BeforeInsert, BeforeUpdate } from "typeorm";
 
-import { CoreEntity } from "./core.entity";
+import { CoreEntity } from "@preterer/typeorm-extensions";
+
 import { EntityWithPermissions } from "../interfaces/entityWithPermissions";
 import { Permission } from "./permission.entity";
 import { Tables } from "../enums/tables";

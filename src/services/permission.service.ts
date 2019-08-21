@@ -1,13 +1,13 @@
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Service, Inject } from "typedi";
 
-import { EntityService } from "./entity.service";
+import { EntityService, QueryBuilder } from "@preterer/typeorm-extensions";
+
 import { Permission } from "../entities/permission.entity";
 import { PermissionRepository } from "../repositories/permission.repository";
 import { PermissionModel } from "../interfaces/models/permission.model";
 import { RoleService } from "./role.service";
 import { UserService } from "./user.service";
-import { QueryBuilder } from "../utils/queryBuilder";
 
 /**
  * Permission management service

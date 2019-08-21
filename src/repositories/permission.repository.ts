@@ -1,8 +1,8 @@
 import { EntityRepository } from "typeorm";
 
-import { CoreRepository } from "./core.repository";
+import { CoreRepository, QueryBuilder } from "@preterer/typeorm-extensions";
+
 import { Permission } from "../entities/permission.entity";
-import { QueryBuilder } from "../utils/queryBuilder";
 import { PermissionFilters } from "../interfaces/filters/permission.filters";
 
 /**
