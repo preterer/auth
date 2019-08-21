@@ -1,17 +1,20 @@
 import bcrypt from "bcrypt";
 import { Container } from "typedi";
 
+import { PermissionFilters } from "../src/interfaces/filters/permission.filters";
+import { PermissionService } from "../src/services/permission.service";
+import { User } from "../src/entities/user.entity";
 import { UserService } from "../src/services/user.service";
 
 import { mockDB, mockData, userData, clearData } from "./testUtils";
-import { User } from "../src/entities/user.entity";
 
 describe("User", function() {
-  let userService: UserService, userId: number, roleId: number, amounts: number;
+  let permissionService: PermissionService, userService: UserService, userId: number, roleId: number, amounts: number;
 
   beforeAll(async function() {
     await mockDB();
     userService = Container.get(UserService);
+    permissionService = Container.get(PermissionService);
   });
 
   beforeEach(async function() {
@@ -96,6 +99,13 @@ describe("User", function() {
 
     it("should not delete a non existing user", async function() {
       await expect(userService.delete(userId + 1)).rejects.toThrow();
+    });
+
+    it("should delete permissions with role", async function() {
+      await permissionService.add({ name: "test", userId });
+      await userService.delete(userId);
+      const permissions = await permissionService.list({ userId } as PermissionFilters);
+      expect(permissions.count).toBe(0);
     });
   });
 

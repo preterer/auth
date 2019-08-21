@@ -1,9 +1,10 @@
 import Container from "typedi";
 
-import { mockDB, mockData, clearData } from "./testUtils";
+import { PermissionFilters } from "../src/interfaces/filters/permission.filters";
 import { PermissionService } from "../src/services/permission.service";
 import { RoleService } from "../src/services/role.service";
-import { PermissionFilters } from "../src/interfaces/filters/permission.filters";
+
+import { mockDB, mockData, clearData } from "./testUtils";
 
 describe("Role", function() {
   let permissionService: PermissionService, roleService: RoleService, roleId: number, amounts: number;
@@ -120,6 +121,13 @@ describe("Role", function() {
     it("should allow to delete a regular role", async function() {
       await roleService.delete(roleId);
       await expect(roleService.get(roleId)).rejects.toThrow();
+    });
+
+    it("should delete permissions with role", async function() {
+      await permissionService.add({ name: "test", roleId });
+      await roleService.delete(roleId);
+      const permissions = await permissionService.list({ roleId } as PermissionFilters);
+      expect(permissions.count).toBe(0);
     });
   });
 

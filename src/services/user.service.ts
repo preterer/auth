@@ -4,13 +4,15 @@ import { DeepPartial } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Service, Inject } from "typedi";
 
+import { AuthConfig } from "../config";
 import { EntityService } from "./entity.service";
+import { Errors } from "../enums/errors";
 import { LoginData } from "../interfaces/models/loginData.model";
+import { PermissionFilters } from "../interfaces/filters/permission.filters";
+import { PermissionService } from "./permission.service";
 import { RoleService } from "./role.service";
 import { User } from "../entities/user.entity";
 import { UserRepository } from "../repositories/user.repository";
-import { Errors } from "../enums/errors";
-import { AuthConfig } from "../config";
 
 /**
  * User management service
@@ -42,6 +44,16 @@ export class UserService extends EntityService<User, DeepPartial<User>> {
   protected readonly config: AuthConfig;
 
   /**
+   * Permission service
+   *
+   * @protected
+   * @type {PermissionService}
+   * @memberof UserService
+   */
+  @Inject(type => PermissionService)
+  protected readonly permissionService: PermissionService;
+
+  /**
    * Role service
    *
    * @protected
@@ -60,6 +72,23 @@ export class UserService extends EntityService<User, DeepPartial<User>> {
    */
   getByLogin(login: string): Promise<User> {
     return this.repository.findOne({ where: { login } });
+  }
+
+  /**
+   * Deletes an user
+   *
+   * @param {number} id
+   * @returns {Promise<number>}
+   * @memberof UserService
+   */
+  async delete(id: number): Promise<number> {
+    await this.get(id);
+    const permissions = await this.permissionService.list({ limit: -1, userId: id } as PermissionFilters);
+    if (permissions.count) {
+      await this.permissionService.deleteMultiple(permissions.list.map(permission => permission.id));
+    }
+    await this.repository.delete(id);
+    return id;
   }
 
   /**

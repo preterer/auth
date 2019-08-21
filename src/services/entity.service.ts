@@ -92,6 +92,17 @@ export abstract class EntityService<Entity extends CoreEntity, Model = object> {
   }
 
   /**
+   * Delets multiple entities
+   *
+   * @param {number[]} ids
+   * @returns {Promise<void>}
+   * @memberof EntityService
+   */
+  async deleteMultiple(ids: number[]): Promise<void> {
+    this.repository.delete(ids);
+  }
+
+  /**
    * Splices entity from list
    *
    * @template Entity

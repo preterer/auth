@@ -65,6 +65,14 @@ export class RoleService extends EntityService<Role, RoleModel> {
     return role;
   }
 
+  /**
+   * Updates a roles
+   *
+   * @param {number} id
+   * @param {RoleModel} model
+   * @returns {Promise<Role>}
+   * @memberof RoleService
+   */
   async update(id: number, model: RoleModel): Promise<Role> {
     const role = await super.update(id, model);
     if (model.parentId) {
@@ -74,11 +82,22 @@ export class RoleService extends EntityService<Role, RoleModel> {
     return role;
   }
 
+  /**
+   * Deletes a role
+   *
+   * @param {number} id
+   * @returns {Promise<number>}
+   * @memberof RoleService
+   */
   async delete(id: number): Promise<number> {
     const role = await this.get(id);
     const parent = await role.parent;
     if (!parent) {
       throw new Error(Errors.ROLE_ROOT_CANNOT_BE_DELETED);
+    }
+    const permissions = await this.permissionService.list({ limit: -1, roleId: id } as PermissionFilters);
+    if (permissions.count) {
+      await this.permissionService.deleteMultiple(permissions.list.map(permission => permission.id));
     }
     await this.repository.delete(id);
     return id;
@@ -120,7 +139,9 @@ export class RoleService extends EntityService<Role, RoleModel> {
       roleId,
       inheritedOnly: true
     } as PermissionFilters);
-    await Promise.all(permissions.list.map(permission => this.permissionService.delete(permission.id)));
+    if (permissions.count) {
+      await this.permissionService.deleteMultiple(permissions.list.map(permission => permission.id));
+    }
   }
 
   /**
