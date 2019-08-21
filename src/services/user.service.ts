@@ -1,7 +1,8 @@
+import { DeepPartial } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Service, Inject } from "typedi";
 
-import { EntityWithPermissionsService } from "./entityWithPermissions.service";
+import { EntityService } from "./entity.service";
 import { RoleService } from "./role.service";
 import { User } from "../entities/user.entity";
 import { UserRepository } from "../repositories/user.repository";
@@ -14,7 +15,7 @@ import { UserRepository } from "../repositories/user.repository";
  * @extends {EntityService<User>}
  */
 @Service()
-export class UserService extends EntityWithPermissionsService<User> {
+export class UserService extends EntityService<User, DeepPartial<User>> {
   /**
    * User repository
    *
