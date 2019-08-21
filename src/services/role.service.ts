@@ -52,6 +52,28 @@ export class RoleService extends EntityService<Role, RoleModel> {
       .getOne();
   }
 
+  /**
+   * Adds a role
+   *
+   * @param {RoleModel} model
+   * @returns {Promise<Role>}
+   * @memberof RoleService
+   */
+  async add(model: RoleModel): Promise<Role> {
+    const role = await super.add(model);
+    await this.copyPermissions(model.parentId, role.id);
+    return role;
+  }
+
+  async update(id: number, model: RoleModel): Promise<Role> {
+    const role = await super.update(id, model);
+    if (model.parentId) {
+      await this.removeInheritedPermissions(id);
+      await this.copyPermissions(model.parentId, id);
+    }
+    return role;
+  }
+
   async delete(id: number): Promise<number> {
     const role = await this.get(id);
     const parent = await role.parent;
