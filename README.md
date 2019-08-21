@@ -9,7 +9,7 @@
 - ~~implement root role & parent role~~
 - ~~copy permissions from parent to child role~~
 - ~~implement permission check~~
-- implement passport middleware
+- ~~implement passport middleware~~
 - implement transactions
 - extract core features to another library
 - ...?
