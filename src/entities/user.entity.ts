@@ -49,7 +49,7 @@ export class User extends CoreEntity implements EntityWithPermissions {
    * @type {Promise<Role[]>}
    * @memberof User
    */
-  @ManyToMany(type => Permission, { nullable: true, lazy: true })
+  @ManyToMany(type => Role, role => role.users, { nullable: true, lazy: true })
   @JoinTable({ name: Tables.USER_ROLES })
   roles: Promise<Role[]>;
 
