@@ -4,6 +4,7 @@ import { DeepPartial } from "typeorm";
 
 import { Permission } from "../src/entities/permission.entity";
 import { Role } from "../src/entities/role.entity";
+import { RoleRepository } from "../src/repositories/role.repository";
 import { RoleService } from "../src/services/role.service";
 import { User } from "../src/entities/user.entity";
 import { UserService } from "../src/services/user.service";
@@ -39,13 +40,14 @@ export async function mockData(
 ): Promise<{ userId: number; roleId: number; amounts: number; rootRole: DeepPartial<Role> }> {
   const userService = Container.get(UserService);
   const roleService = Container.get(RoleService);
+  const roleRepository = TypeORM.getCustomRepository(RoleRepository);
 
-  const rootRole = await roleService.add({ name: "Root" });
+  const rootRole = await roleRepository.save(roleRepository.create({ name: "Root" }));
 
   let userId: number, roleId: number;
   for (let i = 1; i <= amounts; i++) {
     userId = await userService.add(userData(i)).then(user => user.id);
-    roleId = await roleService.add({ name: roleName(i) }).then(role => role.id);
+    roleId = await roleService.add({ name: roleName(i), parentId: rootRole.id }).then(role => role.id);
   }
   return { userId, roleId, amounts, rootRole };
 }

@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, ManyToMany } from "typeorm";
+import { Column, Entity, OneToMany, ManyToMany, ManyToOne, JoinColumn } from "typeorm";
 
 import { EntityWithPermissions } from "../interfaces/entityWithPermissions";
 import { Permission } from "./permission.entity";
@@ -25,12 +25,31 @@ export class Role extends WithEntity implements EntityWithPermissions {
   name: string;
 
   /**
+   * Parent role
+   *
+   * @type {Promise<Role>}
+   * @memberof Role
+   */
+  @ManyToOne(type => Role, role => role.children, { nullable: true, lazy: true })
+  @JoinColumn({ name: "parent_id" })
+  parent?: Promise<Role>;
+
+  /**
+   * Children of the role
+   *
+   * @type {Promise<Role[]>}
+   * @memberof Role
+   */
+  @OneToMany(type => Role, role => role.parent, { nullable: true, lazy: true })
+  children?: Promise<Role[]>;
+
+  /**
    * Permissions of the role
    *
    * @type {Promise<Permission[]>}
    * @memberof Role
    */
-  @OneToMany(type => Permission, permission => permission.role, { nullable: true, lazy: true, cascade: true })
+  @OneToMany(type => Permission, permission => permission.role, { nullable: true, lazy: true })
   permissions: Promise<Permission[]>;
 
   /**

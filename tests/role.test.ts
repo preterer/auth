@@ -48,4 +48,39 @@ describe("Role", function() {
       expect(results.count).toEqual(amounts + 1); // + root role
     });
   });
+
+  describe("getRoot", function() {
+    it("should find the root role", async function() {
+      const rootRole = await roleService.getRoot();
+      expect(rootRole).not.toBeUndefined();
+      const parent = await rootRole.parent;
+      expect(parent).toBeUndefined();
+    });
+  });
+
+  describe("add", function() {
+    it("should allow to add a role with parent", async function() {
+      const newRole = await roleService.add({ name: "Test", parentId: roleId });
+      expect(newRole).not.toBeUndefined();
+      const newRoleFromDb = await roleService.get(newRole.id);
+      const parent = await newRoleFromDb.parent;
+      expect(parent).not.toBeUndefined();
+      expect(parent.id).toBe(roleId);
+    });
+
+    it("should not allow to add a role with parent that doesn't exist", async function() {
+      await expect(roleService.add({ name: "Test", parentId: roleId + 1 })).rejects.toThrow();
+    });
+
+    it("should not allow to add a role without parent", async function() {
+      await expect(roleService.add({ name: "Test", parentId: undefined })).rejects.toThrow();
+    });
+  });
+
+  describe("delete", function() {
+    it("should not allow to remove a role without parent that doesn't exist", async function() {
+      const rootRole = await roleService.getRoot();
+      await expect(roleService.delete(rootRole.id)).rejects.toThrow();
+    });
+  });
 });
