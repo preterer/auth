@@ -47,6 +47,7 @@ describe("User", function() {
     it("should find an user with login matching search", async function() {
       const user = await userService.get(userId);
       const searches = [
+        user.login,
         user.login.slice(0, 4),
         user.login.slice(4, 8),
         user.login.slice(user.login.length - 4, user.login.length - 1)
