@@ -7,6 +7,7 @@ import { PermissionRepository } from "../repositories/permission.repository";
 import { PermissionModel } from "../interfaces/models/permission.model";
 import { RoleService } from "./role.service";
 import { UserService } from "./user.service";
+import { QueryBuilder } from "../utils/queryBuilder";
 
 /**
  * Permission management service
@@ -84,7 +85,35 @@ export class PermissionService extends EntityService<Permission, PermissionModel
       .leftJoin("permission.role", "role")
       .leftJoin("role.users", "roleUser")
       .andWhere("(user.id = :userId OR roleUser.id = :userId)", { userId });
+    this.applyEntityQuery(query, entityId, entityType);
+    return query.getCount().then(count => count > 0);
+  }
 
+  /**
+   * Checks if role has given permission
+   *
+   * @param {number} roleId
+   * @param {string} permissionName
+   * @param {string} [entityId]
+   * @param {string} [entityType]
+   * @returns {Promise<boolean>}
+   * @memberof PermissionService
+   */
+  checkRole(roleId: number, permissionName: string, entityId?: string, entityType?: string): Promise<boolean> {
+    const query = this.repository
+      .createQueryBuilder("permission")
+      .andEqual("permission.name", permissionName)
+      .innerJoin("permission.role", "role")
+      .andEqual("role.id", roleId);
+    this.applyEntityQuery(query, entityId, entityType);
+    return query.getCount().then(count => count > 0);
+  }
+
+  private applyEntityQuery(
+    query: QueryBuilder<Permission>,
+    entityId?: string,
+    entityType?: string
+  ): QueryBuilder<Permission> {
     const roleEntityIsNull = "(role.entityId IS NULL AND role.entityType IS NULL)";
     const permissionEntityIsNull = "(permission.entityId IS NULL AND permission.entityType IS NULL)";
 
@@ -97,6 +126,6 @@ export class PermissionService extends EntityService<Permission, PermissionModel
     } else {
       query.andWhere(`(${roleEntityIsNull} AND ${permissionEntityIsNull})`);
     }
-    return query.getCount().then(count => count > 0);
+    return query;
   }
 }
