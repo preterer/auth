@@ -154,4 +154,24 @@ describe("User", function() {
       await expect(userService.roleRemove(userId, roleId)).rejects.toThrow();
     });
   });
+
+  describe("login", function() {
+    it("should login an user", async function() {
+      const loginData = userData(1);
+      const result = await userService.login(loginData);
+      expect(result).not.toBeUndefined();
+    });
+
+    it("should fail to login when user provides an incorrect password", async function() {
+      const loginData = userData(1);
+      loginData.password = "incorrect password";
+      await expect(userService.login(loginData)).rejects.toThrow();
+    });
+
+    it("should fail to login when user provides login of non existing user", async function() {
+      const loginData = userData(1);
+      loginData.login = "incorrect login";
+      await expect(userService.login(loginData)).rejects.toThrow();
+    });
+  });
 });

@@ -69,7 +69,7 @@ export async function clearData(): Promise<void> {
  * @param {number} id
  * @returns {DeepPartial<User>}
  */
-export function userData(id: number): DeepPartial<User> {
+export function userData(id: number): { login: string; password: string } {
   return {
     login: `testUser_${id}`,
     password: `testPassword_${id}`
