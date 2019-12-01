@@ -101,6 +101,9 @@ export class UserService extends EntityService<User, DeepPartial<User>> {
    */
   async login(loginData: LoginData): Promise<string> {
     const user = await this.getByLogin(loginData.login);
+    if (!user) {
+      throw new Error(Errors.INCORRECT_LOGIN_DATA);
+    }
     await this.verifyPassword(user, loginData.password);
     return jwt.sign({ id: user.id }, this.config.jwtSecret);
   }
