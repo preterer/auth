@@ -76,6 +76,22 @@ export class UserService extends EntityService<User, DeepPartial<User>> {
   }
 
   /**
+   * Adds a new user
+   *
+   * @param {DeepPartial<User>} model
+   * @returns {Promise<User>}
+   * @memberof UserService
+   */
+  add(model: DeepPartial<User>): Promise<User> {
+    return this.getByLogin(model.login).then(user => {
+      if (user) {
+        throw new Error(Errors.USER_ALREADY_EXISTS);
+      }
+      return super.add(model);
+    });
+  }
+
+  /**
    * Deletes an user
    *
    * @param {number} id

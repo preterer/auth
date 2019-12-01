@@ -10,6 +10,10 @@ Authentication library
 - apply `middleware()` to your express application
 - apply `checkAccess`
 
+## Missing features
+
+- copy permissions to child roles
+
 ## Development
 
 ### Build
